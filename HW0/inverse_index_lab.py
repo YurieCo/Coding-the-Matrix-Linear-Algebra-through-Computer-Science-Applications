@@ -8,13 +8,12 @@ coursera = 1
 
 ## 1: (Task 1) Movie Review
 ## Task 1
-from random import randint
 def movie_review(name):
     """
     Input: the name of a movie
     Output: a string (one of the review options), selected at random using randint
     """
-    return ["See it!", "A gem!", "Ideological claptrap!"][randint(0,2)]
+    return ...
 
 
 
@@ -28,12 +27,19 @@ def makeInverseIndex(strlist):
     (surrounded by spaces), and an occurence of the string as a substring of a word (e.g. "because").
     Only the former should be represented in the inverse index.
     Feel free to use a loop instead of a comprehension.
-
     Example:
     >>> makeInverseIndex(['hello world','hello','hello cat','hellolot of cats']) == {'hello': {0, 1, 2}, 'cat': {2}, 'of': {3}, 'world': {0}, 'cats': {3}, 'hellolot': {3}}
     True
     """
-    pass
+    inverseIndex = {}
+    for (i, doc) in enumerate(strlist):
+        for word in doc.split():
+            if word in inverseIndex:
+                inverseIndex[word].add(i)
+            else:
+                inverseIndex[word] = set()
+                inverseIndex[word].add(i)
+    return inverseIndex
 
 
 
@@ -50,7 +56,12 @@ def orSearch(inverseIndex, query):
     >>> orSearch(idx, ['Johann', 'Carl'])
     {0, 2, 3, 4, 5}
     """
-    pass
+    doc_id_set = set()
+    for word in query:
+        if word in inverseIndex:
+            for id in inverseIndex[word]:
+                doc_id_set.add(id)
+    return doc_id_set
 
 
 
@@ -60,12 +71,17 @@ def andSearch(inverseIndex, query):
     Input: an inverse index, as created by makeInverseIndex, and a list of words to query
     Output: the set of all document ids that contain _all_ of the specified words
     Feel free to use a loop instead of a comprehension.
-
     >>> idx = makeInverseIndex(['Johann Sebastian Bach', 'Johannes Brahms', 'Johann Strauss the Younger', 'Johann Strauss the Elder', ' Johann Christian Bach',  'Carl Philipp Emanuel Bach'])
     >>> andSearch(idx, ['Johann', 'the'])
     {2, 3}
     >>> andSearch(idx, ['Johann', 'Bach'])
     {0, 4}
     """
-    pass
-
+    doc_id_set = set()
+    for word in query:
+        if word not in inverseIndex:
+           return doc_id_set
+    doc_id_set = inverseIndex[query[0]]
+    for word in query:
+        doc_id_set = doc_id_set & inverseIndex[word]
+    return doc_id_set
